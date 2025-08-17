@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: fitcheck-mongo
+    restart: always
+    env_file: .env
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: fitcheck-mongo-express
+    restart: always
+    env_file: .env
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINDATABASE: admin
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+
+  backend:
+    build: .
+    container_name: fitcheck-backend
+    restart: always
+    env_file: .env
+    environment:
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo_data:
