@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: FitCheck
+  profiles:
+    active: dev
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.fitcheck: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Optional: other app-specific properties
+app:
+  version: 1.0.0
+
+# CORS config or other settings can remain in config classes

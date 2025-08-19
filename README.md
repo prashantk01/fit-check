@@ -61,3 +61,36 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - Mongo database name
 - docker-compose.yml references .env via env_file:
 - application.properties uses ${SPRING_DATA_MONGODB_URI} to read DB connection dynamically
+
+
+### ✅ Step 1.5: Health Check Endpoint with DTO
+- Implemented `/api/v1/health` endpoint.
+- Returns structured JSON response using a `HealthResponse` DTO:
+  ```json
+  {
+    "status": "UP",
+    "profile": "dev",
+    "name": "FitCheck",
+    "version": "1.0.0",
+    "timestamp": ,
+    "message": "FitCheck Application is running..!"
+  }
+### ✅ Step 1.6: CORS Configuration
+- Added global CORS configuration using `CorsFilter`.
+- Allows requests from:
+  - `http://localhost:3000` (React dev frontend)
+  - `https://fitcheck.app` (future production domain)
+- Supports HTTP methods: GET, POST, PUT, DELETE, OPTIONS.
+- Allows Authorization headers and credentials (JWT ready).
+- Ensures frontend can communicate with backend without CORS errors.
+
+### ✅ Step 1.8: Swagger/OpenAPI Setup
+- Added Swagger/OpenAPI using `springdoc-openapi-starter-webmvc-ui`.
+- Configured `OpenApiConfig` to provide:
+  - Custom title: "FitCheck API Documentation"
+  - Version: 1.0.0
+  - Description: REST APIs for FitCheck backend
+  - Contact information and license
+  - External documentation link to GitHub repository
+- Endpoints are auto-detected from `@RestController` classes.
+- Access API documentation and test endpoints at: http://localhost:8080/swagger-ui/index.html

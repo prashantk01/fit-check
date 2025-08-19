@@ -3,13 +3,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import lombok.extern.slf4j.Slf4j;
 import com.fitcheck.fit_check.dto.health.HealthCheckResponse;
 
 /**
  * HealthCheckController is a REST controller that provides an endpoint to check the health of the FitCheck application.
  * It returns a simple JSON response indicating the application status, version, and timestamp.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/health")
 public class HealthCheckController {
@@ -34,7 +35,7 @@ public class HealthCheckController {
                 "FitCheck Application is running..!"
         );
         // Log the health check response (optional)
-        // logger.info("Health Check Response: {}", response); 
+        log.info("Health Check Response: {}", response); 
         return response;
     }
 }
