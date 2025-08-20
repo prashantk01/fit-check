@@ -94,3 +94,10 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
   - External documentation link to GitHub repository
 - Endpoints are auto-detected from `@RestController` classes.
 - Access API documentation and test endpoints at: http://localhost:8080/swagger-ui/index.html
+
+### Step 2.5: Code Structure Added core layers
+- `model/user/User.java` → User entity
+- `model/profile/Profile.java` → Profile entity
+- `repository` → Spring Data MongoDB repositories (bridge between DB and service layer)
+- `service` → Business logic layer for user and profile
+- `model` → schema model for user and profile
