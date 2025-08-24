@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fitcheck.fit_check.enums.AuthProvider;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -95,10 +97,6 @@ public class User {
 
     public void setAuthProvider(AuthProvider authProvider) {
         this.authProvider = authProvider;
-    }
-
-    public enum AuthProvider {
-        LOCAL, GOOGLE, FACEBOOK, GITHUB, APPLE
     }
 
     public String toString() {

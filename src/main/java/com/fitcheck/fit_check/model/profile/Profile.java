@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fitcheck.fit_check.enums.Gender;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -14,6 +16,9 @@ import jakarta.validation.constraints.Size;
 public class Profile {
     @Id
     private String id;
+
+    @NotNull(message = "Name cannot be null")
+    private String name;
 
     @Indexed(unique = true)
     private String userId;
@@ -38,9 +43,7 @@ public class Profile {
     @Positive(message = "Target Weight must be positive")
     private double targetWeightKg; // in kg
 
-    @Positive(message = "Target Height must be positive")
-    private double targetHeightCm; // in cm
-
+    @NotNull(message = "Reminder time required when reminder is enabled")
     private LocalTime reminderTime = LocalTime.parse("10:00:00"); // Time for daily reminders, e.g., 08:00 for 8 AM
 
     private boolean isReminderEnabled = true; // Flag to enable/disable reminders
@@ -117,14 +120,6 @@ public class Profile {
         this.targetWeightKg = targetWeightKg;
     }
 
-    public double getTargetHeightCm() {
-        return targetHeightCm;
-    }
-
-    public void setTargetHeightCm(double targetHeightCm) {
-        this.targetHeightCm = targetHeightCm;
-    }
-
     public LocalTime getReminderTime() {
         return reminderTime;
     }
@@ -141,11 +136,20 @@ public class Profile {
         this.isReminderEnabled = isReminderEnabled;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Profile{" +
                 "id='" + id + '\'' +
                 ", userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
                 ", bio='" + bio + '\'' +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", gender='" + gender + '\'' +
@@ -153,15 +157,8 @@ public class Profile {
                 ", weightKg=" + weightKg +
                 ", heightCm=" + heightCm +
                 ", targetWeightKg=" + targetWeightKg +
-                ", targetHeightCm=" + targetHeightCm +
                 ", reminderTime=" + reminderTime +
                 ", isReminderEnabled=" + isReminderEnabled +
                 '}';
-    }
-
-    public enum Gender {
-        MALE,
-        FEMALE,
-        OTHER
     }
 }
