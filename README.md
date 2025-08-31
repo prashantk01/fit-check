@@ -101,3 +101,21 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - `repository` → Spring Data MongoDB repositories (bridge between DB and service layer)
 - `service` → Business logic layer for user and profile
 - `model` → schema model for user and profile
+
+
+### Step 2.8 Added DTO, Mapper, Controller, Service Layer logic for User and Profile
+1. DTO Structure
+- Added User DTOs and Profile DTOs for request and response handling:
+- UserCreate – Used for user registration, includes validation rules.
+- UserResponse – Returned in API responses for user data.
+- ProfileCreate – Used for profile creation/update, includes validation for BMI calculation fields.
+- ProfileResponse – Returned in API responses for profile data.
+2. Validation
+- DTOs now leverage jakarta.validation annotations for request validation:
+- @NotBlank, @Size, @Email for strings
+- @Positive for numeric fields
+- @NotNull for required fields
+3. Mappers
+- Added UserMapper and ProfileMapper:
+- Convert DTOs to Entities and Entities to Response DTOs.
+- Encapsulates logic for mapping and ensures clean controller-service separation.
