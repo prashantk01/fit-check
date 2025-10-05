@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.fitcheck.fit_check.dto.profile.ProfileCreate;
 import com.fitcheck.fit_check.dto.profile.ProfileResponse;
+import org.springframework.dao.DuplicateKeyException;
+import com.fitcheck.fit_check.exception.ResourceNotFoundException;
 import com.fitcheck.fit_check.mapper.ProfileMapper;
 import com.fitcheck.fit_check.model.profile.Profile;
 import com.fitcheck.fit_check.model.user.User;
@@ -26,10 +28,11 @@ public class ProfileService {
 
     public ProfileResponse createProfile(ProfileCreate profileDTO, String userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
-
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        if (profileRepository.existsByUserId(userId)) {
+            throw new DuplicateKeyException("Profile already exists for user with id: " + userId);
+        }
         Profile profile = ProfileMapper.toEntity(profileDTO, user.getId());
-        profileRepository.save(profile);
         Profile createdProfile = profileRepository.save(profile);
         return ProfileMapper.toResponse(createdProfile);
     }
@@ -46,7 +49,7 @@ public class ProfileService {
 
     public ProfileResponse getProfileById(String id) {
         Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Profile not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found with id: " + id));
         return ProfileMapper.toResponse(profile);
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.fitcheck.fit_check.dto.user.UserCreate;
 import com.fitcheck.fit_check.dto.user.UserResponse;
 import com.fitcheck.fit_check.enums.AuthProvider;
+import org.springframework.dao.DuplicateKeyException;
+import com.fitcheck.fit_check.exception.ResourceNotFoundException;
 import com.fitcheck.fit_check.mapper.UserMapper;
 import com.fitcheck.fit_check.model.user.User;
 import com.fitcheck.fit_check.repository.UserRepository;
@@ -27,7 +29,7 @@ public class UserService {
     public UserResponse createUser(UserCreate userDTO) {
         // check if username or email already exists
         if (userRepository.existsByEmail(userDTO.email()) || userRepository.existsByUsername(userDTO.username())) {
-            throw new IllegalArgumentException("Username or Email already exists");
+            throw new DuplicateKeyException("Username or Email already exists");
         }
         User user = UserMapper.toEntity(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.password()));
@@ -38,7 +40,8 @@ public class UserService {
     }
 
     public UserResponse getUserById(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         return UserMapper.toResponse(user);
     }
 
