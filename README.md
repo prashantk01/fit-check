@@ -95,7 +95,7 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - Endpoints are auto-detected from `@RestController` classes.
 - Access API documentation and test endpoints at: http://localhost:8080/swagger-ui/index.html
 
-### Step 2.5: Code Structure Added core layers
+### Step 1.2.5: Code Structure Added core layers
 - `model/user/User.java` → User entity
 - `model/profile/Profile.java` → Profile entity
 - `repository` → Spring Data MongoDB repositories (bridge between DB and service layer)
@@ -103,7 +103,7 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - `model` → schema model for user and profile
 
 
-### Step 2.8 Added DTO, Mapper, Controller, Service Layer logic for User and Profile
+### Step 1.2.8 Added DTO, Mapper, Controller, Service Layer logic for User and Profile
 1. DTO Structure
 - Added User DTOs and Profile DTOs for request and response handling:
 - UserCreate – Used for user registration, includes validation rules.
@@ -119,3 +119,6 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - Added UserMapper and ProfileMapper:
 - Convert DTOs to Entities and Entities to Response DTOs.
 - Encapsulates logic for mapping and ensures clean controller-service separation.
+
+### Step 1.2.9 Added Profile Update Mapper, Service layer logic
+- Enabling only non-null fields to get updated while updating user profile
