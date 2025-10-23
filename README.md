@@ -122,3 +122,8 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 
 ### Step 1.2.9 Added Profile Update Mapper, Service layer logic
 - Enabling only non-null fields to get updated while updating user profile
+
+### Step 1.3.3 AuthController Implemented, Custom error handling, BcryptPasswordEncoder
+- Added /register /login Authentication end point (username/email/password)
+- Badcredentials error handling
+- Password is encoded with BcryptPasswordEncoder

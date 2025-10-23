@@ -12,35 +12,35 @@ import org.springframework.dao.DuplicateKeyException;
 import com.fitcheck.fit_check.exception.ResourceNotFoundException;
 import com.fitcheck.fit_check.mapper.UserMapper;
 import com.fitcheck.fit_check.model.user.User;
-import com.fitcheck.fit_check.repository.UserRepository;
+import com.fitcheck.fit_check.repository.AuthRepository;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserService(AuthRepository authRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.authRepository = authRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     // Method to create a new user
     public UserResponse createUser(UserCreate userDTO) {
         // check if username or email already exists
-        if (userRepository.existsByEmail(userDTO.email()) || userRepository.existsByUsername(userDTO.username())) {
+        if (authRepository.existsByEmail(userDTO.email()) || authRepository.existsByUsername(userDTO.username())) {
             throw new DuplicateKeyException("Username or Email already exists");
         }
         User user = UserMapper.toEntity(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.password()));
         user.setRoles(Set.of("ROLE_USER")); // Assign default role
         user.setAuthProvider(AuthProvider.LOCAL);
-        User createdUser = userRepository.save(user);
+        User createdUser = authRepository.save(user);
         return UserMapper.toResponse(createdUser);
     }
 
     public UserResponse getUserById(String id) {
-        User user = userRepository.findById(id)
+        User user = authRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         return UserMapper.toResponse(user);
     }

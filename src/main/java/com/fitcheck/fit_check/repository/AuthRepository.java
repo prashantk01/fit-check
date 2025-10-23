@@ -6,8 +6,10 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.fitcheck.fit_check.model.user.User;
 
-public interface UserRepository extends MongoRepository<User, String> {
+public interface AuthRepository extends MongoRepository<User, String> {
     Optional<User> findByUsername(String username);
+
+    Optional<User> findByUsernameAndPassword(String username, String password);
 
     Optional<User> findByEmail(String email);
 

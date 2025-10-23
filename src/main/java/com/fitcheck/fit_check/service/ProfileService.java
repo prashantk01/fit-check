@@ -7,29 +7,28 @@ import org.springframework.stereotype.Service;
 import com.fitcheck.fit_check.dto.profile.ProfileCreate;
 import com.fitcheck.fit_check.dto.profile.ProfileResponse;
 import com.fitcheck.fit_check.dto.profile.ProfileUpdate;
-
 import org.springframework.dao.DuplicateKeyException;
 import com.fitcheck.fit_check.exception.ResourceNotFoundException;
 import com.fitcheck.fit_check.mapper.ProfileMapper;
 import com.fitcheck.fit_check.model.profile.Profile;
 import com.fitcheck.fit_check.model.user.User;
+import com.fitcheck.fit_check.repository.AuthRepository;
 import com.fitcheck.fit_check.repository.ProfileRepository;
-import com.fitcheck.fit_check.repository.UserRepository;
 
 @Service
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
 
-    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository) {
+    public ProfileService(ProfileRepository profileRepository, AuthRepository authRepository) {
         this.profileRepository = profileRepository;
-        this.userRepository = userRepository;
+        this.authRepository = authRepository;
 
     }
 
     public ProfileResponse createProfile(ProfileCreate profileDTO, String userId) {
-        User user = userRepository.findById(userId)
+        User user = authRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         if (profileRepository.existsByUserId(userId)) {
             throw new DuplicateKeyException("Profile already exists for user with id: " + userId);
