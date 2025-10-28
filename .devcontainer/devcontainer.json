@@ -1,0 +1,20 @@
+{
+  "name": "FitCheck Dev Env",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "postCreateCommand": "docker compose up --build -d",
+  "forwardPorts": [8080, 8081, 27017],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "vscjava.vscode-java-pack",
+        "redhat.vscode-yaml"
+      ]
+    }
+  }
+}
