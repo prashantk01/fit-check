@@ -2,7 +2,7 @@
   "name": "FitCheck Dev",
   "dockerComposeFile": "docker-compose.yml",
   "service": "backend",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/workspaces/fit-check",
   "forwardPorts": [8080, 8081],
   "remoteEnv": {
     "SPRING_PROFILES_ACTIVE": "dev"
