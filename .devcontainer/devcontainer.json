@@ -1,20 +1,27 @@
 {
-  "name": "FitCheck Dev Env",
-  "image": "mcr.microsoft.com/devcontainers/java:17",
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  },
+  "name": "FitCheck Dev",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "backend",
   "workspaceFolder": "/workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-  "postCreateCommand": "docker compose up --build -d",
-  "forwardPorts": [8080, 8081, 27017],
+  "forwardPorts": [8080, 8081],
+  "remoteEnv": {
+    "SPRING_PROFILES_ACTIVE": "dev"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-azuretools.vscode-docker",
         "vscjava.vscode-java-pack",
-        "redhat.vscode-yaml"
-      ]
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "github.copilot",
+        "vmware.vscode-spring-boot"
+      ],
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "editor.formatOnSave": true,
+        "files.autoSave": "afterDelay"
+      }
     }
-  }
+  },
+  "postCreateCommand": "echo '✅ FitCheck Codespace ready! Run docker-compose up --build'"
 }
