@@ -19,6 +19,7 @@ public class CorsConfig {
                 "http://localhost:3000", // React dev
                 "https://fitcheck.app" // future production frontend
         ));
+        config.addAllowedOriginPattern("https://*.app.github.dev"); // for Codespaces
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
 
