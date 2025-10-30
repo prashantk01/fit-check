@@ -74,3 +74,4 @@ application-*.properties
 
 
 .m2/
+/mongo_data/

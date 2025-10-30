@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   mongodb:
     image: mongo:6.0
@@ -10,7 +10,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - ./mongo_data:/data/db
 
   mongo-express:
     image: mongo-express:latest
@@ -28,7 +28,7 @@ services:
       - mongodb
 
   backend:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     container_name: fitcheck-backend
@@ -41,7 +41,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
-      - ~/.m2:/root/.m2    # cache Maven dependencies
+      - ~/.m2:/root/.m2 # cache Maven dependencies
     command: mvn spring-boot:run
     depends_on:
       - mongodb

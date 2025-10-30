@@ -13,14 +13,17 @@ import com.fitcheck.fit_check.dto.auth.AuthRegister;
 import com.fitcheck.fit_check.dto.auth.AuthResponse;
 import com.fitcheck.fit_check.exception.BadCredentialException;
 import com.fitcheck.fit_check.repository.AuthRepository;
+import com.fitcheck.fit_check.security.JwtService;
 
 @Service
 public class AuthService {
     private final AuthRepository authRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtService jwtService;
 
-    AuthService(AuthRepository authRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    AuthService(AuthRepository authRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
         this.authRepository = authRepository;
+        this.jwtService = jwtService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     };
 
@@ -32,13 +35,15 @@ public class AuthService {
         if (bCryptPasswordEncoder.matches(authLogin.password(), user.get().getPassword()) == false) {
             throw new BadCredentialException("Invalid username or password");
         }
-        // Here you would normally validate the password and generate a token
-        String token = "dummy-fitcheck-jwt-token"; // Replace with actual token generation logic
+        String jwtToken = jwtService.generateToken(
+                user.get().getUsername(),
+                user.get().getRoles().stream().toList());
+
         return new AuthResponse(
                 user.get().getUsername(),
                 user.get().getEmail(),
                 user.get().getRoles(),
-                token,
+                jwtToken,
                 "Bearer",
                 3600L // Token expiry time in seconds
         );
@@ -72,11 +77,16 @@ public class AuthService {
         newUser.setRoles(Set.of("USER")); // Default role
         newUser.setPassword(bCryptPasswordEncoder.encode(authRegister.password()));
         authRepository.save(newUser);
+
+        String jwtToken = jwtService.generateToken(
+                newUser.getUsername(),
+                newUser.getRoles().stream().toList());
+
         AuthResponse authResponse = new AuthResponse(
                 newUser.getUsername(),
                 newUser.getEmail(),
                 newUser.getRoles(),
-                "dummy-fitcheck-jwt-token", // Replace with actual token generation logic
+                jwtToken,
                 "Bearer",
                 3600L // Token expiry time in seconds
         );
