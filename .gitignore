@@ -71,3 +71,13 @@ application-*.properties
 # Generated files
 *.swp
 *.swo
+
+#mongo db files
+dump/
+restore/
+*.bson
+*.log
+*.metadata
+*.wt
+/mongodata/
+/mongo_data/
