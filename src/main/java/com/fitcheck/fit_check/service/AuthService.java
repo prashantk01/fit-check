@@ -7,28 +7,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fitcheck.fit_check.model.user.User;
-
+import com.fitcheck.fit_check.repository.UserRepository;
 import com.fitcheck.fit_check.dto.auth.AuthLogin;
 import com.fitcheck.fit_check.dto.auth.AuthRegister;
 import com.fitcheck.fit_check.dto.auth.AuthResponse;
 import com.fitcheck.fit_check.exception.BadCredentialException;
-import com.fitcheck.fit_check.repository.AuthRepository;
 import com.fitcheck.fit_check.security.JwtService;
 
 @Service
 public class AuthService {
-    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtService jwtService;
 
-    AuthService(AuthRepository authRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
-        this.authRepository = authRepository;
+    AuthService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
+        this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     };
 
     public AuthResponse login(AuthLogin authLogin) {
-        Optional<User> user = authRepository.findByUsername(authLogin.username());
+        Optional<User> user = userRepository.findByUsername(authLogin.username());
         if (user.isEmpty()) {
             throw new BadCredentialException("Invalid username or password");
         }
@@ -50,11 +49,11 @@ public class AuthService {
     }
 
     public AuthResponse register(AuthRegister authRegister) {
-        Optional<User> existingUser = authRepository.findByUsername(authRegister.username());
+        Optional<User> existingUser = userRepository.findByUsername(authRegister.username());
         if (existingUser.isPresent()) {
             throw new BadCredentialException("Username is already taken");
         }
-        Optional<User> existingEmail = authRepository.findByEmail(authRegister.email());
+        Optional<User> existingEmail = userRepository.findByEmail(authRegister.email());
         if (existingEmail.isPresent()) {
             throw new BadCredentialException("Email is already registered");
         }
@@ -76,7 +75,7 @@ public class AuthService {
         newUser.setEmail(authRegister.email());
         newUser.setRoles(Set.of("USER")); // Default role
         newUser.setPassword(bCryptPasswordEncoder.encode(authRegister.password()));
-        authRepository.save(newUser);
+        userRepository.save(newUser);
 
         String jwtToken = jwtService.generateToken(
                 newUser.getUsername(),
