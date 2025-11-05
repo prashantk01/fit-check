@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 public class OpenApiConfig {
@@ -31,6 +34,14 @@ public class OpenApiConfig {
                                                                 .url("http://springdoc.org")))
                                 .externalDocs(new ExternalDocumentation()
                                                 .description("Project Repository")
-                                                .url("https://github.com/prashantk01/fitcheck"));
+                                                .url("https://github.com/prashantk01/fitcheck"))
+                                // add JWT
+                                .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
+                                .components(new Components()
+                                                .addSecuritySchemes("BearerAuth",
+                                                                new SecurityScheme()
+                                                                                .type(SecurityScheme.Type.HTTP)
+                                                                                .scheme("bearer")
+                                                                                .bearerFormat("JWT")));
         }
 }

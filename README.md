@@ -127,3 +127,38 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - Added /register /login Authentication end point (username/email/password)
 - Badcredentials error handling
 - Password is encoded with BcryptPasswordEncoder
+
+### 🧩 Step 1.3.8 — JWT Authentication
+
+- **JWT Generation**
+  - A JWT is generated on successful **login** or **register**.
+  - It includes:
+    - `username, roles, expiry, createdAt`
+  - The token is signed using the app’s secret key via `Jwts.builder()`.
+
+- **Client Request**
+  - Every client request must include the token in the header:
+    ```http
+    Authorization: Bearer <JWT_Header.Payload.Signature>
+    ```
+
+- **JwtAuthFilter**
+  - All incoming requests pass through `JwtAuthFilter`.
+  - It **skips** public endpoints:
+    ```
+    /api/auth/**
+    /api/v1/health
+    /swagger-ui/**
+    ```
+  - For all other routes, it **validates**:
+    - Token signature  
+    - Token expiry  
+
+- **Unauthorized Handling**
+  - Returns `401 Unauthorized` if the token is **missing** or **invalid**.
+
+- **Security Configuration**
+  - `SecurityConfig` permits only the public routes listed above.
+  - All remaining endpoints require a **valid JWT** for access.
+
+---

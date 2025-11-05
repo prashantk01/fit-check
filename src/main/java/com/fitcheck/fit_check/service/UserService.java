@@ -45,4 +45,10 @@ public class UserService {
         return UserMapper.toResponse(user);
     }
 
+    public UserResponse getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
+        return UserMapper.toResponse(user);
+    }
+
 }
