@@ -36,7 +36,7 @@ public class SecurityConfig {
                 // Stateless session management
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // ✅ Reuse the injected singleton filter
+                // Reuse the injected singleton filter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .build();

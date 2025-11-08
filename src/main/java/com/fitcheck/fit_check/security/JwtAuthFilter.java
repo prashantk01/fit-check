@@ -96,6 +96,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             // Lookup user details from database
+            // TODO: Cache user details to avoid DB hit on every request
+            // User model instance not DTO
             UserResponse user = userService.getUserByUsername(username);
             if (user == null || user.username() == null) {
                 logger.warn("User not found for token username: {}", username);

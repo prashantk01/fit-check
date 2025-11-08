@@ -162,3 +162,9 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
   - All remaining endpoints require a **valid JWT** for access.
 
 ---
+
+### Step 1.3.9 - Role Based Access control (RBAC) 
+- Added ADMIN and USER roles with JWT-based role claims.
+- Implemented SecurityUtil to fetch current user info and roles from context.
+- Enforced access: ADMIN can manage all users, USER can only access their own data.
+- Added global handler for AccessDeniedException returning clean 403 Forbidden responses.

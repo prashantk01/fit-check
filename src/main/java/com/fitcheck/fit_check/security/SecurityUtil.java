@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.fitcheck.fit_check.model.user.User;
+import com.fitcheck.fit_check.dto.user.UserResponse;
 
 @Component
 public class SecurityUtil {
@@ -18,8 +18,9 @@ public class SecurityUtil {
             return null;
         }
         Object principal = auth.getPrincipal();
-        if (principal instanceof User user) {
-            return user.getUsername();
+        if (principal instanceof UserResponse user) {
+            return user.username();
+
         }
         return auth.getName();
     }
@@ -43,8 +44,8 @@ public class SecurityUtil {
             return null;
         }
         Object principal = auth.getPrincipal();
-        if (principal instanceof User user) {
-            return user.getId();
+        if (principal instanceof UserResponse user) {
+            return user.id();
         }
         return auth.getPrincipal().toString();
     }

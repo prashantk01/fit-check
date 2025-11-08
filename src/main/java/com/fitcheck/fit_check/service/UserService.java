@@ -1,6 +1,5 @@
 package com.fitcheck.fit_check.service;
 
-import java.security.Security;
 import java.util.Set;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,6 +12,7 @@ import com.fitcheck.fit_check.enums.Roles;
 
 import org.springframework.dao.DuplicateKeyException;
 import com.fitcheck.fit_check.exception.ResourceNotFoundException;
+import com.fitcheck.fit_check.exception.AccessDeniedException;
 import com.fitcheck.fit_check.mapper.UserMapper;
 import com.fitcheck.fit_check.model.user.User;
 import com.fitcheck.fit_check.repository.UserRepository;
@@ -50,7 +50,8 @@ public class UserService {
         if (!securityUtil.hasRole(Roles.ADMIN.name())) {
             String currentUserId = securityUtil.getCurrentUserId();
             if (!currentUserId.equals(id)) {
-                throw new AccessDeniedException("Access denied to user with id: " + id);
+                throw new AccessDeniedException(
+                        "Access denied to user with id: " + id);
             }
         }
 
@@ -66,6 +67,11 @@ public class UserService {
     }
 
     public void deleteUserById(String id) {
+        if (!securityUtil.hasRole(Roles.ADMIN.name())) {
+            throw new AccessDeniedException(
+                    "Access denied to delete user with id: " + id);
+
+        }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         userRepository.delete(user);
