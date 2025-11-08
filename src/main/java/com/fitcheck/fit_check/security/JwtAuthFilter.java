@@ -50,20 +50,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String header = request.getHeader("Authorization");
 
-        // Case 1: No token at all
-        if (header == null || !header.startsWith("Bearer ")) {
-            if (!isPublicEndpoint(uri)) {
-                logger.warn("Missing or invalid Authorization header for protected endpoint: {}", uri);
-                // throw new JwtException("Missing or invalid Authorization header");
-                unauthorizedAccess(response, " Missing or invalid Authorization header");
-                return;
-            }
-            // Public endpoint, skip filter
+        // Case 1: Public endpoint
+        if (isPublicEndpoint(uri)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Case 2: Token present — validate it
+        // Case 2: No token present
+        if (header == null || !header.startsWith("Bearer ")) {
+            logger.warn("Missing or invalid Authorization header for protected endpoint: {}", uri);
+            // throw new JwtException("Missing or invalid Authorization header");
+            unauthorizedAccess(response, " Missing or invalid Authorization header");
+            return;
+        }
+
+        // Case 3: Token present — validate it
         String token = header.substring(7);
         String username;
 
@@ -71,13 +72,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             username = jwtService.extractUsername(token);
         } catch (JwtException e) {
             logger.warn("Invalid JWT: {}", e.getMessage());
+            response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"Invalid JWT\"}");
             return;
         }
 
-        if (username == null || username.isBlank() || jwtService.isTokenExpired(token)) {
+        if (jwtService.isTokenExpired(token)) {
             logger.warn("Expired or invalid token for user: {}", username);
+            response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"Expired or invalid JWT token\"}");
+            return;
+        }
+
+        if (username == null || username.isBlank()) {
+            logger.warn("Token does not contain a valid username");
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"Token does not contain a valid username\"}");
             return;
         }
 
@@ -86,7 +99,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             UserResponse user = userService.getUserByUsername(username);
             if (user == null || user.username() == null) {
                 logger.warn("User not found for token username: {}", username);
+                response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"User not found\"}");
                 return;
             }
 
@@ -108,7 +123,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Case 3: Valid token — continue normally
+        // Case 4: Valid token — continue normally
         filterChain.doFilter(request, response);
     }
 

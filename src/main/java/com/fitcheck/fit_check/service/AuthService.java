@@ -11,6 +11,7 @@ import com.fitcheck.fit_check.repository.UserRepository;
 import com.fitcheck.fit_check.dto.auth.AuthLogin;
 import com.fitcheck.fit_check.dto.auth.AuthRegister;
 import com.fitcheck.fit_check.dto.auth.AuthResponse;
+import com.fitcheck.fit_check.enums.Roles;
 import com.fitcheck.fit_check.exception.BadCredentialException;
 import com.fitcheck.fit_check.security.JwtService;
 
@@ -71,9 +72,10 @@ public class AuthService {
                     "Password must contain at least one lowercase character, one uppercase character, one number, and one special character (+@#$&%) and be at least 8 characters long");
         }
         User newUser = new User();
+        Set<Roles> role = Set.of(Roles.USER);
         newUser.setUsername(authRegister.username());
         newUser.setEmail(authRegister.email());
-        newUser.setRoles(Set.of("USER")); // Default role
+        newUser.setRoles(role);
         newUser.setPassword(bCryptPasswordEncoder.encode(authRegister.password()));
         userRepository.save(newUser);
 

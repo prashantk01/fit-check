@@ -5,8 +5,10 @@ import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fitcheck.fit_check.enums.AuthProvider;
+import com.fitcheck.fit_check.enums.Roles;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -32,7 +34,8 @@ public class User {
     @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
     private String password;
 
-    private Set<String> roles;
+    @Field("roles")
+    private Set<Roles> roles;
 
     private AuthProvider authProvider = AuthProvider.LOCAL;
 
@@ -41,7 +44,7 @@ public class User {
     }
 
     // Parameterized constructor for creating User instances
-    public User(String id, String username, String email, String password, Set<String> roles,
+    public User(String id, String username, String email, String password, Set<Roles> roles,
             AuthProvider authProvider) {
         this.id = id;
         this.username = username;
@@ -83,11 +86,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<String> getRoles() {
+    public Set<Roles> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(Set<Roles> roles) {
         this.roles = roles;
     }
 

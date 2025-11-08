@@ -2,6 +2,9 @@ package com.fitcheck.fit_check.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.fitcheck.fit_check.enums.Roles;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,7 +29,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username, List<String> roles) {
+    public String generateToken(String username, List<Roles> roles) {
         Map<String, Object> roleMap = new HashMap<>();
         roleMap.put("roles", roles);
         return Jwts.builder()
@@ -46,7 +49,7 @@ public class JwtService {
                 .getBody();
     }
 
-    public List<String> extractRoles(String token) {
+    public List<Roles> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("roles", List.class);
     }
