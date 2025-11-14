@@ -168,3 +168,10 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - Implemented SecurityUtil to fetch current user info and roles from context.
 - Enforced access: ADMIN can manage all users, USER can only access their own data.
 - Added global handler for AccessDeniedException returning clean 403 Forbidden responses.
+
+### Step 1.4.4 - Weight Module development
+- Weight module supports adding, fetching (with optional date range), and deleting weight entries with full RBAC checks.  
+- API uses OffsetDateTime, while MongoDB stores timestamps as Instant for consistent UTC handling.  
+- Mapper converts between these automatically, ensuring correct sorting and range queries.  
+- Each new entry also updates the user’s profile weight.
+---

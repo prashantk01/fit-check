@@ -60,6 +60,19 @@ public class UserService {
         return UserMapper.toResponse(user);
     }
 
+    public void checkAndValidateUserById(String id) {
+        if (!securityUtil.hasRole(Roles.ADMIN.name())) {
+            String currentUserId = securityUtil.getCurrentUserId();
+            if (!currentUserId.equals(id)) {
+                throw new AccessDeniedException(
+                        "Access denied to user with id: " + id);
+            }
+        }
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
+    }
+
     public UserResponse getUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
