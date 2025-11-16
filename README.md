@@ -175,3 +175,6 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 - Mapper converts between these automatically, ensuring correct sorting and range queries.  
 - Each new entry also updates the user’s profile weight.
 ---
+### Step 1.4.7 - BMI and Progress calculation
+- Integrated BMI calculation and dynamic progress metrics (difference from target + status).
+---

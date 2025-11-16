@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-
+import com.fitcheck.fit_check.dto.profile.ProfileResponse;
 import com.fitcheck.fit_check.dto.profile.ProfileUpdate;
 import com.fitcheck.fit_check.dto.weight.WeightAdd;
 import com.fitcheck.fit_check.dto.weight.WeightResponse;
+import com.fitcheck.fit_check.enums.ProgressStatus;
 import com.fitcheck.fit_check.exception.ResourceNotFoundException;
 import com.fitcheck.fit_check.mapper.WeightMapper;
-import com.fitcheck.fit_check.model.profile.Profile;
 import com.fitcheck.fit_check.model.profile.WeightEntry;
 import com.fitcheck.fit_check.repository.WeightRepository;
 import com.fitcheck.fit_check.exception.AccessDeniedException;
@@ -38,26 +38,51 @@ public class WeightService {
         WeightEntry weightEntry = WeightMapper.toEntity(weightAdd, userId);
         weightRepository.save(weightEntry);
         updateProfileWeight(userId, weightAdd.weightKg());
-        return WeightMapper.toResponse(weightEntry);
+        ProfileResponse profileResponse = profileService.findByUserId(userId);
+        return getWeightResponseWithCalculations(weightEntry, profileResponse);
+    }
+
+    public Double calculateBMI(double weightKg, double heightCm) {
+        Double bmi = null;
+        if (weightKg > 0 && heightCm > 0) {
+            double heightM = heightCm / 100.0;
+            bmi = weightKg / (heightM * heightM);
+        }
+        return bmi;
     }
 
     private void updateProfileWeight(String userId, double weightKg) {
-        Profile profile = profileService.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user with id: " + userId));
-
+        ProfileResponse profileResponse = profileService.findByUserId(userId);
         ProfileUpdate profileUpdate = new ProfileUpdate(
                 null, null, null, null, null,
                 weightKg, null, null, null, null);
-        profileService.updateProfile(profile.getId(), profileUpdate);
+        profileService.updateProfile(profileResponse.id(), profileUpdate);
     }
 
     public List<WeightResponse> getWeightEntriesOfAUser(String userId) {
         userService.checkAndValidateUserById(userId);
-        // List<WeightEntry> weightEntries = weightRepository.findByUserId(userId);
         List<WeightEntry> weightEntries = weightRepository.findByUserIdOrderByTimestampDesc(userId);
-        return weightEntries.stream()
-                .map(WeightMapper::toResponse)
+        if (weightEntries.isEmpty()) {
+            return List.of();
+        }
+        ProfileResponse profileResponse = profileService.findByUserId(userId);
+        double userCurrentHeightCm = profileResponse.heightCm();
+        double targetWeightKg = profileResponse.targetWeightKg();
+
+        if (targetWeightKg <= 0 || userCurrentHeightCm <= 0) {
+            return weightEntries.stream()
+                    .map(entry -> {
+                        Double bmi = calculateBMI(entry.getWeightKg(), userCurrentHeightCm);
+                        return WeightMapper.toResponse(entry, bmi, null, null, null);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        List<WeightResponse> weightResponses = weightEntries.stream()
+                .map(entry -> getWeightResponseWithCalculations(entry, profileResponse))
                 .collect(Collectors.toList());
+
+        return weightResponses;
     }
 
     private String getUserIdFromWeightEntryId(String weightEntryId) {
@@ -79,6 +104,28 @@ public class WeightService {
         weightRepository.deleteByUserId(userId);
     }
 
+    private WeightResponse getWeightResponseWithCalculations(WeightEntry entry, ProfileResponse profileResponse) {
+        Double userCurrentHeightCm = profileResponse.heightCm();
+        Double targetWeightKg = profileResponse.targetWeightKg();
+        Double bmiValue = null;
+        if (userCurrentHeightCm != null && userCurrentHeightCm > 0) {
+            bmiValue = calculateBMI(entry.getWeightKg(), userCurrentHeightCm);
+        }
+        Double differenceWithTargetKg = null;
+        ProgressStatus progressStatus = null;
+        if (targetWeightKg != null && targetWeightKg > 0) {
+            differenceWithTargetKg = entry.getWeightKg() - targetWeightKg;
+            if (differenceWithTargetKg > 0) {
+                progressStatus = ProgressStatus.ABOVE_TARGET;
+            } else if (differenceWithTargetKg < 0) {
+                progressStatus = ProgressStatus.BELOW_TARGET;
+            } else {
+                progressStatus = ProgressStatus.TARGET_ACHIEVED;
+            }
+        }
+        return WeightMapper.toResponse(entry, bmiValue, targetWeightKg, differenceWithTargetKg, progressStatus);
+    }
+
     public List<WeightResponse> getWeightEntriesOfAUserInDateRange(String userId, OffsetDateTime startDate,
             OffsetDateTime endDate) {
         userService.checkAndValidateUserById(userId);
@@ -90,9 +137,27 @@ public class WeightService {
                 userId,
                 startInstant,
                 endInstant);
-        return weightEntries.stream()
-                .map(WeightMapper::toResponse)
+        if (weightEntries.isEmpty()) {
+            return List.of();
+        }
+        ProfileResponse profileResponse = profileService.findByUserId(userId);
+        Double userCurrentHeightCm = profileResponse.heightCm();
+        Double targetWeightKg = profileResponse.targetWeightKg();
+        Double bmi = null;
+        if ((targetWeightKg == null || targetWeightKg <= 0)
+                || (userCurrentHeightCm == null || userCurrentHeightCm <= 0)) {
+            return weightEntries.stream()
+                    .map(entry -> {
+                        return WeightMapper.toResponse(entry, bmi, null, null, null);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        List<WeightResponse> weightResponses = weightEntries.stream()
+                .map(entry -> getWeightResponseWithCalculations(entry, profileResponse))
                 .collect(Collectors.toList());
+
+        return weightResponses;
     }
 
 }

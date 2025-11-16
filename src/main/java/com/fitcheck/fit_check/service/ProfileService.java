@@ -39,8 +39,10 @@ public class ProfileService {
     }
 
     // Method to find a profile by user ID
-    public Optional<Profile> findByUserId(String userId) {
-        return profileRepository.findByUserId(userId);
+    public ProfileResponse findByUserId(String userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found with userId: " + userId));
+        return ProfileMapper.toResponse(profile);
     }
 
     // Method to check if a profile exists for a given user ID
@@ -52,6 +54,36 @@ public class ProfileService {
         Profile profile = profileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found with id: " + id));
         return ProfileMapper.toResponse(profile);
+    }
+
+    public double getCurrentWeight(String userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user with id: " + userId));
+        double userCurrentWeightKg = profile.getWeightKg();
+        if (userCurrentWeightKg <= 0) {
+            throw new IllegalStateException("Current weight is not set for user with id: " + userId);
+        }
+        return userCurrentWeightKg;
+    }
+
+    public double getTargetWeight(String userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user with id: " + userId));
+        double userTargetWeightKg = profile.getTargetWeightKg();
+        if (userTargetWeightKg <= 0) {
+            throw new IllegalStateException("Target weight is not set for user with id: " + userId);
+        }
+        return userTargetWeightKg;
+    }
+
+    public double getHeightCm(String userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user with id: " + userId));
+        double userHeightCm = profile.getHeightCm();
+        if (userHeightCm <= 0) {
+            throw new IllegalStateException("Height is not set for user with id: " + userId);
+        }
+        return userHeightCm;
     }
 
     public ProfileResponse updateProfile(String id, ProfileUpdate profileUpdateDTO) {

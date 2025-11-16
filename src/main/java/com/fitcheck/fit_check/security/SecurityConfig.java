@@ -15,11 +15,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter; // ✅ injected automatically
-    private final JwtService jwtService;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter, JwtService jwtService) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.jwtService = jwtService;
     }
 
     @Bean

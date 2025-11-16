@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 
 import com.fitcheck.fit_check.dto.weight.WeightAdd;
 import com.fitcheck.fit_check.dto.weight.WeightResponse;
+import com.fitcheck.fit_check.enums.ProgressStatus;
 import com.fitcheck.fit_check.model.profile.WeightEntry;
 
 public class WeightMapper {
@@ -18,7 +19,6 @@ public class WeightMapper {
         if (timestamp == null) {
             timestamp = OffsetDateTime.now(ZoneOffset.UTC);
         } else {
-            // Normalize client timestamp to UTC
             timestamp = timestamp.withOffsetSameInstant(ZoneOffset.UTC);
         }
         Instant instantTimestamp = timestamp.toInstant();
@@ -26,12 +26,14 @@ public class WeightMapper {
         return weightEntry;
     }
 
-    public static WeightResponse toResponse(WeightEntry weightEntry) {
+    public static WeightResponse toResponse(WeightEntry weightEntry, Double bmi, Double targetWeightKg,
+            Double differenceWithTargetKg, ProgressStatus status) {
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(weightEntry.getTimestamp(), ZoneOffset.UTC);
         return new WeightResponse(
                 weightEntry.getId(),
                 timestamp,
-                weightEntry.getWeightKg());
+                weightEntry.getWeightKg(),
+                bmi, targetWeightKg, differenceWithTargetKg, status);
     }
 
 }
