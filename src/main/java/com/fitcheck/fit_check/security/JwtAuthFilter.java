@@ -33,11 +33,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     public JwtAuthFilter(JwtService jwtService, @Lazy UserService userService) {
         this.jwtService = jwtService;
         this.userService = userService;
+        System.out.println("=".repeat(80));
+        System.out.println(">>> JwtAuthFilter CONSTRUCTOR CALLED");
+        System.out.println("=".repeat(80));
     }
 
     // Define which endpoints are public
     private boolean isPublicEndpoint(String uri) {
-        return uri.startsWith("/api/auth")
+        return uri.matches("^/api/auth/.*")
+                || uri.equals("/api/auth/login")
+                || uri.equals("/api/auth/register")
                 || uri.startsWith("/api/v1/health")
                 || uri.startsWith("/swagger-ui")
                 || uri.startsWith("/v3/api-docs");
@@ -48,10 +53,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String uri = request.getRequestURI();
+        System.out.println(">>> FILTER URI = " + uri);
+
         String header = request.getHeader("Authorization");
 
         // Case 1: Public endpoint
         if (isPublicEndpoint(uri)) {
+            System.out.println(">>> PUBLIC ENDPOINT - CONTINUING WITHOUT AUTH");
             filterChain.doFilter(request, response);
             return;
         }

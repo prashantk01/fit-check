@@ -32,6 +32,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
             @Valid @RequestBody AuthRegister authRegister) {
+        System.out.println(">>> CONTROLLER REGISTER METHOD CALLED");
+        System.out.println(">>> Request: " + authRegister);
         AuthResponse authResponse = authService.register(authRegister);
         return ResponseEntity.ok(authResponse);
     }

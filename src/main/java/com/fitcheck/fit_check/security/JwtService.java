@@ -26,10 +26,13 @@ public class JwtService {
     private long expirationTimeMs;
 
     private SecretKey getSigningKey() {
+        System.out.println(">>> Signing secret key: " + secretKey);
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String username, List<Roles> roles) {
+        System.out.println(">>> JwtService generateToken called for user: " + username);
+
         Map<String, Object> roleMap = new HashMap<>();
         roleMap.put("roles", roles);
         return Jwts.builder()
