@@ -21,7 +21,8 @@
       "settings": {
         "java.configuration.updateBuildConfiguration": "automatic",
         "editor.formatOnSave": true,
-        "files.autoSave": "afterDelay"
+        "files.autoSave": "afterDelay",
+        "java.jdt.ls.java.home": "/opt/java/openjdk"
       }
     }
   },
