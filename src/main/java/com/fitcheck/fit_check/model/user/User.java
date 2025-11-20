@@ -31,7 +31,7 @@ public class User {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
+    @Size(min = 5, max = 20, message = "Password must be between 5 and 20 characters")
     private String password;
 
     @Field("roles")

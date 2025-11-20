@@ -50,7 +50,9 @@ public class AuthService {
     }
 
     public AuthResponse register(AuthRegister authRegister) {
+        System.out.println(">>> Entered REGISTER METHOD IN AUTH SERVICE");
         Optional<User> existingUser = userRepository.findByUsername(authRegister.username());
+
         if (existingUser.isPresent()) {
             throw new BadCredentialException("Username is already taken");
         }
@@ -71,6 +73,7 @@ public class AuthService {
             throw new BadCredentialException(
                     "Password must contain at least one lowercase character, one uppercase character, one number, and one special character (+@#$&%) and be at least 8 characters long");
         }
+
         User newUser = new User();
         Set<Roles> role = Set.of(Roles.USER);
         newUser.setUsername(authRegister.username());

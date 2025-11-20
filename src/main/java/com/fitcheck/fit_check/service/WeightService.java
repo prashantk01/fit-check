@@ -23,11 +23,14 @@ public class WeightService {
     private final WeightRepository weightRepository;
     private final UserService userService;
     private final ProfileService profileService;
+    private final BmiService bmiService;
 
-    public WeightService(WeightRepository weightRepository, UserService userService, ProfileService profileService) {
+    public WeightService(WeightRepository weightRepository, UserService userService, ProfileService profileService,
+            BmiService bmiService) {
         this.weightRepository = weightRepository;
         this.userService = userService;
         this.profileService = profileService;
+        this.bmiService = bmiService;
     }
 
     public WeightResponse addWeightEntry(String userId, WeightAdd weightAdd) {
@@ -40,15 +43,6 @@ public class WeightService {
         updateProfileWeight(userId, weightAdd.weightKg());
         ProfileResponse profileResponse = profileService.findByUserId(userId);
         return getWeightResponseWithCalculations(weightEntry, profileResponse);
-    }
-
-    public Double calculateBMI(double weightKg, double heightCm) {
-        Double bmi = null;
-        if (weightKg > 0 && heightCm > 0) {
-            double heightM = heightCm / 100.0;
-            bmi = weightKg / (heightM * heightM);
-        }
-        return bmi;
     }
 
     private void updateProfileWeight(String userId, double weightKg) {
@@ -72,7 +66,7 @@ public class WeightService {
         if (targetWeightKg <= 0 || userCurrentHeightCm <= 0) {
             return weightEntries.stream()
                     .map(entry -> {
-                        Double bmi = calculateBMI(entry.getWeightKg(), userCurrentHeightCm);
+                        Double bmi = bmiService.calculateBMI(entry.getWeightKg(), userCurrentHeightCm);
                         return WeightMapper.toResponse(entry, bmi, null, null, null);
                     })
                     .collect(Collectors.toList());
@@ -109,7 +103,7 @@ public class WeightService {
         Double targetWeightKg = profileResponse.targetWeightKg();
         Double bmiValue = null;
         if (userCurrentHeightCm != null && userCurrentHeightCm > 0) {
-            bmiValue = calculateBMI(entry.getWeightKg(), userCurrentHeightCm);
+            bmiValue = bmiService.calculateBMI(entry.getWeightKg(), userCurrentHeightCm);
         }
         Double differenceWithTargetKg = null;
         ProgressStatus progressStatus = null;
