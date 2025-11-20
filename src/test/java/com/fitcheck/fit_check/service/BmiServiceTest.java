@@ -5,8 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class BmiServiceTest {
-    private final BmiService bmiService = new BmiService();
 
+    private final BmiService bmiService = new BmiService();
+    
     @Test
     @DisplayName("UT: Calculate BMI correctly for valid weight and height")
     public void shouldCalculateCorrectBMI() {

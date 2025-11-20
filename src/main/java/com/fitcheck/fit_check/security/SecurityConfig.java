@@ -31,6 +31,8 @@ public class SecurityConfig {
                 // Define access rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger
+                        .requestMatchers("/api/v1/health").permitAll() // Health check if you have it
                         .anyRequest().authenticated())
 
                 // Stateless session management

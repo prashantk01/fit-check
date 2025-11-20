@@ -1,5 +1,8 @@
 package com.fitcheck.fit_check.service;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class BmiService {
 
     public Double calculateBMI(double weightKg, double heightCm) {
