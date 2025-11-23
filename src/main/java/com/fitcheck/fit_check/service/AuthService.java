@@ -50,7 +50,6 @@ public class AuthService {
     }
 
     public AuthResponse register(AuthRegister authRegister) {
-        System.out.println(">>> Entered REGISTER METHOD IN AUTH SERVICE");
         Optional<User> existingUser = userRepository.findByUsername(authRegister.username());
 
         if (existingUser.isPresent()) {

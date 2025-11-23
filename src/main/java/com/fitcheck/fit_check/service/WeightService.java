@@ -35,22 +35,22 @@ public class WeightService {
 
     public WeightResponse addWeightEntry(String userId, WeightAdd weightAdd) {
         userService.checkAndValidateUserById(userId);
+        // check if user profile exist or not
+        ProfileResponse profileResponse = profileService.findByUserId(userId);
         if (weightAdd.weightKg() <= 0) {
             throw new IllegalArgumentException("Weight must be greater than zero");
         }
         WeightEntry weightEntry = WeightMapper.toEntity(weightAdd, userId);
         weightRepository.save(weightEntry);
-        updateProfileWeight(userId, weightAdd.weightKg());
-        ProfileResponse profileResponse = profileService.findByUserId(userId);
+        updateProfileWeight(weightAdd.weightKg(), profileResponse.id());
         return getWeightResponseWithCalculations(weightEntry, profileResponse);
     }
 
-    private void updateProfileWeight(String userId, double weightKg) {
-        ProfileResponse profileResponse = profileService.findByUserId(userId);
+    private void updateProfileWeight(double weightKg, String profileId) {
         ProfileUpdate profileUpdate = new ProfileUpdate(
                 null, null, null, null, null,
                 weightKg, null, null, null, null);
-        profileService.updateProfile(profileResponse.id(), profileUpdate);
+        profileService.updateProfile(profileId, profileUpdate);
     }
 
     public List<WeightResponse> getWeightEntriesOfAUser(String userId) {

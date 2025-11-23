@@ -9,10 +9,9 @@ import com.fitcheck.fit_check.dto.user.UserCreate;
 import com.fitcheck.fit_check.dto.user.UserResponse;
 import com.fitcheck.fit_check.enums.AuthProvider;
 import com.fitcheck.fit_check.enums.Roles;
-
-import org.springframework.dao.DuplicateKeyException;
 import com.fitcheck.fit_check.exception.ResourceNotFoundException;
 import com.fitcheck.fit_check.exception.AccessDeniedException;
+import com.fitcheck.fit_check.exception.DuplicateKeyException;
 import com.fitcheck.fit_check.mapper.UserMapper;
 import com.fitcheck.fit_check.model.user.User;
 import com.fitcheck.fit_check.repository.UserRepository;

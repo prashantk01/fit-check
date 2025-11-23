@@ -1,6 +1,7 @@
 package com.fitcheck.fit_check.controller;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import java.nio.charset.StandardCharsets;
@@ -38,6 +39,11 @@ public class AuthControllerIT extends IntegrationTestBase {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+    }
+
+    @AfterEach
+    void deleteAllUsers() {
+        userRepository.deleteAll();
     }
 
     private String toJson(Object obj) throws Exception {
@@ -115,6 +121,31 @@ public class AuthControllerIT extends IntegrationTestBase {
                 // .andExpect(jsonPath("$.token").value(tokenForRegUser))
                 .andExpect(jsonPath("$.username").value("userA"));
 
+    }
+
+    @Test
+    @DisplayName("IT: should not register for already existing username")
+    public void shouldNotRegisterWithExistingUsername() throws Exception {
+        // register user
+        registerUser("userA", "userA@email.com", "userA@123");
+        AuthRegister duplicateAuthRegister = new AuthRegister("userA", "userB@email.com", "userB@123");
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(duplicateAuthRegister)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Username is already taken"));
+    }
+
+    @Test
+    @DisplayName("IT: should not register for already existing email")
+    public void shouldNotRegisterWithExistingEmail() throws Exception {
+        registerUser("useraB", "userB@email.com", "userB@123");
+        AuthRegister duplicateAuthRegister = new AuthRegister("userA", "userB@email.com", "userA@123");
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(duplicateAuthRegister)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Email is already registered"));
     }
 
 }
