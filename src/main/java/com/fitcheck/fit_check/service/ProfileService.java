@@ -1,13 +1,10 @@
 package com.fitcheck.fit_check.service;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
 import com.fitcheck.fit_check.dto.profile.ProfileCreate;
 import com.fitcheck.fit_check.dto.profile.ProfileResponse;
 import com.fitcheck.fit_check.dto.profile.ProfileUpdate;
-import org.springframework.dao.DuplicateKeyException;
+import com.fitcheck.fit_check.exception.DuplicateKeyException;
 import com.fitcheck.fit_check.exception.ResourceNotFoundException;
 import com.fitcheck.fit_check.mapper.ProfileMapper;
 import com.fitcheck.fit_check.model.profile.Profile;
