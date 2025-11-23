@@ -178,3 +178,11 @@ The goal is to practice **Spring Boot (Java backend)**, **React frontend**, and 
 ### Step 1.4.7 - BMI and Progress calculation
 - Integrated BMI calculation and dynamic progress metrics (difference from target + status).
 ---
+
+### Step 1.5.5 - Unit and Integration testing (Phase 1 completed)
+- Multiple libraries are required in pom.xml such as spring-boot-starter-test (includes JUnit, Mockito), Testcontainers or H2 for test databases, and spring-security-test for JWT-based authentication testing.
+- Unit tests mainly cover logically involved functions in various layers (e.g., service layer with mocked dependencies) whereas integration tests cover end-to-end logic from API routes to database using @SpringBootTest and MockMvc.
+- MockMvc and @SpringBootTest are used to replicate web context for API endpoint validation, supporting JWT token-based authentication by extracting tokens from responses and passing them in Authorization headers.
+- @BeforeEach and @AfterEach annotations play an important role for managing test dependencies by cleaning up repositories (deleteAll()), setting up test users, extracting JWT tokens, and ensuring test isolation.
+- Test data isolation is critical — delete child entities before parents (weights → profiles → users) and ensure each test runs with a clean database state to avoid flaky tests.
+- Integration tests focus on real scenarios like successful operations (200), authentication failures (401), not found cases (404), and validation errors (400), covering the full request-response cycle with actual database persistence.
