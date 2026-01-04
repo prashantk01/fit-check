@@ -17,10 +17,12 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository) {
+    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository, UserService userService) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
 
     }
 
@@ -86,6 +88,8 @@ public class ProfileService {
     public ProfileResponse updateProfile(String id, ProfileUpdate profileUpdateDTO) {
         Profile existingProfile = profileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found with id: " + id));
+        // security check to make sure user updating their own profile
+        userService.checkAndValidateUserById(existingProfile.getUserId());
         if (profileUpdateDTO.name() != null)
             existingProfile.setName(profileUpdateDTO.name());
         if (profileUpdateDTO.bio() != null)
